@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metricproof-nwb"
+version = "0.1.0"
+description = "Reproducible evidence reports for NWB validation and metadata."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "AtomicGlance" }]
+keywords = ["nwb", "neuroscience", "reproducibility", "data-quality", "provenance"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = []
+
+[project.optional-dependencies]
+nwb = ["pynwb>=3.1"]
+
+[project.scripts]
+metricproof-nwb = "metricproof_nwb.cli:main"
+
+[project.urls]
+Repository = "https://github.com/AtomicGlance/metricproof-nwb"
+Issues = "https://github.com/AtomicGlance/metricproof-nwb/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
