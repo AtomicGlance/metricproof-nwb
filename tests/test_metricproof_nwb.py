@@ -8,6 +8,7 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 from metricproof.schema import load_schema
+
 from metricproof_nwb import audit_nwb, hash_file
 from metricproof_nwb.report import render_json, render_text
 

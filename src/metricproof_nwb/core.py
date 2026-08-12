@@ -14,8 +14,8 @@ from metricproof import (
     hash_file,
 )
 
-from .models import NWBProofReport
 from ._version import __version__
+from .models import NWBProofReport
 
 Validator = Callable[[Path], Iterable[Any]]
 MetadataReader = Callable[[Path], Mapping[str, Any]]
