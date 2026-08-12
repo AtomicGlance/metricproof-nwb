@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metricproof-nwb"
-version = "0.2.0"
+version = "0.3.0"
 description = "Reproducible evidence reports for NWB validation and metadata."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -25,7 +25,14 @@ dependencies = ["metricproof>=0.2,<0.3"]
 
 [project.optional-dependencies]
 nwb = ["pynwb>=3.1"]
-dev = ["jsonschema>=4.23", "ruff>=0.12"]
+inspector = ["nwbinspector>=0.7.2"]
+all = ["pynwb>=3.1", "nwbinspector>=0.7.2"]
+dev = [
+  "jsonschema>=4.23",
+  "nwbinspector>=0.7.2",
+  "pynwb>=3.1",
+  "ruff>=0.12",
+]
 
 [project.scripts]
 metricproof-nwb = "metricproof_nwb.cli:main"
