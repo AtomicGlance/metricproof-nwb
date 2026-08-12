@@ -21,8 +21,10 @@ jobs:
       - name: Install package
         run: python -m pip install ".[dev]"
       - name: Run linting
-        run: python -m ruff check src tests
+        run: python -m ruff check src tests examples
       - name: Run tests
         run: python -m unittest discover -s tests -v
+      - name: Verify bundled academic evidence
+        run: python examples/academic_workflow/verify_evidence.py
       - name: Smoke-test CLI
         run: metricproof-nwb --version

@@ -18,9 +18,18 @@ def render_text(report: NWBProofReport) -> str:
     if report.metadata:
         lines.append("Metadata:")
         lines.extend(f"  {key}: {value}" for key, value in report.metadata.items())
+    if report.validators:
+        lines.append("Validators:")
+        for validator in report.validators:
+            lines.append(f"  {validator['name']} {validator['version']}")
     if report.validation_errors:
         lines.append("Validation errors:")
         lines.extend(f"  - {error}" for error in report.validation_errors)
+    if report.inspector_findings:
+        lines.append("NWBInspector findings:")
+        for finding in report.inspector_findings:
+            importance = finding.get("importance", "UNSPECIFIED")
+            lines.append(f"  - [{importance}] {finding['message']}")
     if report.error:
         lines.append(f"Error: {report.error}")
     if report.warnings:

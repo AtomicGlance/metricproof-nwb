@@ -39,12 +39,29 @@ class NWBProofReport:
         return list(self.report.context.get("warnings", []))
 
     @property
+    def validators(self) -> list[dict[str, Any]]:
+        """Software identities and configurations used to create the report."""
+
+        return [dict(item) for item in self.report.context.get("validators", [])]
+
+    @property
     def validation_errors(self) -> list[str]:
         findings: list[str] = []
         for result in self.report.results:
             if result.check_type != "nwb_validation" or result.status != "fail":
                 continue
             findings.extend(str(item.get("message", item)) for item in result.evidence)
+        return findings
+
+    @property
+    def inspector_findings(self) -> list[dict[str, Any]]:
+        """Structured findings emitted by NWBInspector, if it was requested."""
+
+        findings: list[dict[str, Any]] = []
+        for result in self.report.results:
+            if result.check_type != "nwb_best_practice":
+                continue
+            findings.extend(dict(item) for item in result.evidence)
         return findings
 
     @property

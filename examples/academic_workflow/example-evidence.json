@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0",
+  "report_type": "nwb-audit",
+  "title": "NWB evidence report: synthetic_ecephys_session.nwb",
+  "generated_at": "2026-08-12T12:17:34.234339+00:00",
+  "producer": {
+    "name": "metricproof-nwb",
+    "version": "0.3.0"
+  },
+  "passed": true,
+  "counts": {
+    "pass": 1,
+    "fail": 1,
+    "error": 0
+  },
+  "artifacts": [
+    {
+      "name": "synthetic_ecephys_session.nwb",
+      "uri": "examples/academic_workflow/synthetic_ecephys_session.nwb",
+      "sha256": "c0af65b9c5b871172623b2ce924f084b3b3084237bd9ac044b55e95daac044aa",
+      "size_bytes": 255088,
+      "media_type": "application/x-hdf5",
+      "metadata": {
+        "identifier": "metricproof-nwb-demo-ecephys-001",
+        "session_description": "Synthetic CA1 resting-state recording",
+        "session_start_time": "2025-01-15T10:30:00+00:00",
+        "experimenter": [
+          "MetricProof-NWB example"
+        ],
+        "lab": "Open neuroscience methods demo",
+        "institution": "Synthetic research institute"
+      }
+    }
+  ],
+  "results": [
+    {
+      "check_id": "pynwb-schema-validation",
+      "check_type": "nwb_validation",
+      "status": "pass",
+      "severity": "critical",
+      "message": "PyNWB schema validation passed.",
+      "observed": {
+        "findings": 0
+      },
+      "expected": {
+        "findings": 0
+      },
+      "evidence": [],
+      "why_it_matters": "Schema-valid NWB files are safer to exchange and reuse.",
+      "suggested_fix": ""
+    },
+    {
+      "check_id": "nwbinspector-best-practices",
+      "check_type": "nwb_best_practice",
+      "status": "fail",
+      "severity": "warning",
+      "message": "NWBInspector reported 3 finding(s).",
+      "observed": {
+        "findings": 3
+      },
+      "expected": {
+        "findings": 0
+      },
+      "evidence": [
+        {
+          "message": "Electrode location 'hippocampal CA1' is not a term in the Allen Mouse Brain CCF ontology. Please use either the full name or abbreviation from the Allen Mouse Brain Atlas (e.g., 'Primary visual area' or 'VISp'). This check can be ignored if Allen CCF terms do not meet your needs.",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "severity": "LOW",
+          "check_function_name": "check_electrodes_location_allen_ccf",
+          "object_type": "NWBFile",
+          "object_name": "root",
+          "location": "/",
+          "file_path": "examples/academic_workflow/synthetic_ecephys_session.nwb"
+        },
+        {
+          "message": "The name of experimenter 'MetricProof-NWB example' does not match any of the accepted DANDI forms: 'LastName, Firstname', 'LastName, FirstName MiddleInitial.' or 'LastName, FirstName, MiddleName'.",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "severity": "LOW",
+          "check_function_name": "check_experimenter_form",
+          "object_type": "NWBFile",
+          "object_name": "root",
+          "location": "/",
+          "file_path": "examples/academic_workflow/synthetic_ecephys_session.nwb"
+        },
+        {
+          "message": "Column 'imp' has all NaN values. Consider removing it from the table.",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "severity": "LOW",
+          "check_function_name": "check_col_not_nan",
+          "object_type": "ElectrodesTable",
+          "object_name": "electrodes",
+          "file_path": "examples/academic_workflow/synthetic_ecephys_session.nwb"
+        }
+      ],
+      "why_it_matters": "NWBInspector findings highlight correctness and reuse risks that schema validation alone may not detect.",
+      "suggested_fix": "Review the NWBInspector findings and rerun the audit."
+    }
+  ],
+  "context": {
+    "nwb_metadata": {
+      "identifier": "metricproof-nwb-demo-ecephys-001",
+      "session_description": "Synthetic CA1 resting-state recording",
+      "session_start_time": "2025-01-15T10:30:00+00:00",
+      "experimenter": [
+        "MetricProof-NWB example"
+      ],
+      "lab": "Open neuroscience methods demo",
+      "institution": "Synthetic research institute"
+    },
+    "warnings": [],
+    "validators": [
+      {
+        "name": "pynwb",
+        "version": "4.1.0",
+        "check_id": "pynwb-schema-validation",
+        "configuration": {
+          "api": "pynwb.validate",
+          "injected_runner": false
+        }
+      },
+      {
+        "name": "nwbinspector",
+        "version": "0.7.2",
+        "check_id": "nwbinspector-best-practices",
+        "configuration": {
+          "api": "nwbinspector.inspect_nwbfile",
+          "skip_validate": true,
+          "importance_threshold": "BEST_PRACTICE_SUGGESTION",
+          "ignore": [],
+          "select": [],
+          "config": {}
+        }
+      }
+    ]
+  }
+}

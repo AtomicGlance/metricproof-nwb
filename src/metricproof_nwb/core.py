@@ -16,34 +16,9 @@ from metricproof import (
 
 from ._version import __version__
 from .models import NWBProofReport
+from .validators import Validator, ValidatorSpec, json_value, pynwb_validator
 
-Validator = Callable[[Path], Iterable[Any]]
 MetadataReader = Callable[[Path], Mapping[str, Any]]
-
-
-def _default_validator(path: Path) -> Iterable[Any]:
-    try:
-        from pynwb import validate
-    except ImportError as exc:
-        raise RuntimeError(
-            "PyNWB is required for NWB validation; install metricproof-nwb[nwb]."
-        ) from exc
-
-    try:
-        return validate(path=path)
-    except TypeError:
-        # Keep compatibility with PyNWB versions that still expose ``paths``.
-        return validate(paths=[str(path)])
-
-
-def _json_value(value: Any) -> Any:
-    if value is None or isinstance(value, (str, int, float, bool)):
-        return value
-    if isinstance(value, (list, tuple)):
-        return [_json_value(item) for item in value]
-    if isinstance(value, Mapping):
-        return {str(key): _json_value(item) for key, item in value.items()}
-    return str(value)
 
 
 def _default_metadata_reader(path: Path) -> Mapping[str, Any]:
@@ -69,45 +44,28 @@ def _default_metadata_reader(path: Path) -> Mapping[str, Any]:
             if hasattr(value, "isoformat"):
                 value = value.isoformat()
             if value is not None:
-                metadata[field_name] = _json_value(value)
+                metadata[field_name] = json_value(value)
         return metadata
-
-
-def _normalise_errors(errors: Iterable[Any] | Any) -> list[dict[str, Any]]:
-    if errors is None:
-        return []
-    if isinstance(errors, (str, bytes)):
-        return [{"message": str(errors)}]
-    try:
-        items = list(errors)
-    except TypeError:
-        items = [errors]
-    findings: list[dict[str, Any]] = []
-    for error in items:
-        if isinstance(error, Mapping):
-            finding = {str(key): _json_value(value) for key, value in error.items()}
-            finding.setdefault("message", str(error))
-        else:
-            finding = {"message": str(error)}
-            for name in ("name", "reason", "location", "path", "severity"):
-                value = getattr(error, name, None)
-                if value is not None:
-                    finding[name] = _json_value(value)
-        findings.append(finding)
-    return findings
 
 
 def audit_nwb(
     path: str | Path,
     *,
     validator: Validator | None = None,
+    validators: Iterable[ValidatorSpec] | None = None,
     metadata_reader: MetadataReader | None = None,
+    artifact_uri: str | None = None,
 ) -> NWBProofReport:
     """Hash, inspect, and validate one NWB file.
 
-    ``validator`` and ``metadata_reader`` are injectable so downstream projects
-    can add checks without coupling their tests to a particular PyNWB release.
+    ``validator`` remains as a backwards-compatible way to replace PyNWB with
+    one callable. New integrations should pass one or more ``ValidatorSpec``
+    objects through ``validators`` so the report records the software version,
+    configuration, and meaning of each result.
     """
+
+    if validator is not None and validators is not None:
+        raise ValueError("Pass either validator or validators, not both.")
 
     file_path = Path(path).expanduser().resolve()
     if not file_path.is_file():
@@ -124,7 +82,7 @@ def audit_nwb(
 
     artifact = ArtifactEvidence(
         name=file_path.name,
-        uri=str(file_path),
+        uri=artifact_uri or str(file_path),
         sha256=digest,
         size_bytes=file_path.stat().st_size,
         media_type="application/x-hdf5",
@@ -147,43 +105,61 @@ def audit_nwb(
             )
         )
 
-    try:
-        errors = _normalise_errors((validator or _default_validator)(file_path))
-    except Exception as exc:
-        results.append(
-            CheckResult(
-                check_id="pynwb-schema-validation",
-                check_type="nwb_validation",
-                status="error",
-                severity="critical",
-                message=f"NWB validation could not run: {exc}",
-                observed={"exception": type(exc).__name__},
-                expected={"validation_completed": True},
-                why_it_matters="An unexecuted validator leaves the NWB file unverified.",
-                suggested_fix="Install the NWB extra and confirm the file is readable.",
+    validator_specs = (
+        list(validators)
+        if validators is not None
+        else [pynwb_validator(runner=validator)]
+    )
+    if not validator_specs:
+        raise ValueError("At least one validator must be configured.")
+
+    for spec in validator_specs:
+        try:
+            findings = spec.normaliser(spec.runner(file_path))
+        except Exception as exc:
+            results.append(
+                CheckResult(
+                    check_id=spec.check_id,
+                    check_type=spec.check_type,
+                    status="error",
+                    severity="critical",
+                    message=f"{spec.failure_label} could not run: {exc}",
+                    observed={"exception": type(exc).__name__},
+                    expected={"validation_completed": True},
+                    why_it_matters=(
+                        "An unexecuted validator leaves part of the NWB evidence "
+                        "record unverified."
+                    ),
+                    suggested_fix=(
+                        "Install the corresponding optional dependency and confirm "
+                        "the file is readable."
+                    ),
+                )
             )
-        )
-    else:
+            continue
+
+        if artifact_uri:
+            for finding in findings:
+                if "file_path" in finding:
+                    finding["file_path"] = artifact_uri
+
+        status = spec.status_for(findings)
         results.append(
             CheckResult(
-                check_id="pynwb-schema-validation",
-                check_type="nwb_validation",
-                status="fail" if errors else "pass",
-                severity="critical",
+                check_id=spec.check_id,
+                check_type=spec.check_type,
+                status=status,
+                severity=spec.severity_for(findings),
                 message=(
-                    f"PyNWB reported {len(errors)} validation finding(s)."
-                    if errors
-                    else "PyNWB schema validation passed."
+                    f"{spec.failure_label} reported {len(findings)} finding(s)."
+                    if findings
+                    else spec.pass_message
                 ),
-                observed={"findings": len(errors)},
+                observed={"findings": len(findings)},
                 expected={"findings": 0},
-                evidence=errors,
-                why_it_matters="Schema-valid NWB files are safer to exchange and reuse.",
-                suggested_fix=(
-                    "Correct the reported NWB schema findings and rerun the audit."
-                    if errors
-                    else ""
-                ),
+                evidence=findings,
+                why_it_matters=spec.why_it_matters,
+                suggested_fix=spec.suggested_fix if findings else "",
             )
         )
 
@@ -193,6 +169,10 @@ def audit_nwb(
         results=results,
         artifacts=[artifact],
         producer=ProducerInfo(name="metricproof-nwb", version=__version__),
-        context={"nwb_metadata": metadata, "warnings": warnings},
+        context={
+            "nwb_metadata": metadata,
+            "warnings": warnings,
+            "validators": [spec.provenance() for spec in validator_specs],
+        },
     )
     return NWBProofReport(report=report)
