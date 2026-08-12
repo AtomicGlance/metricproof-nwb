@@ -33,6 +33,7 @@ metricproof-nwb = "metricproof_nwb.cli:main"
 [project.urls]
 Repository = "https://github.com/AtomicGlance/metricproof-nwb"
 Issues = "https://github.com/AtomicGlance/metricproof-nwb/issues"
+PyPI = "https://pypi.org/project/metricproof-nwb/"
 
 [tool.setuptools.packages.find]
 where = ["src"]

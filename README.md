@@ -1,6 +1,7 @@
 # MetricProof-NWB
 
 [![Tests](https://github.com/AtomicGlance/metricproof-nwb/actions/workflows/tests.yml/badge.svg)](https://github.com/AtomicGlance/metricproof-nwb/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/metricproof-nwb.svg)](https://pypi.org/project/metricproof-nwb/)
 
 Reproducible evidence reports for [NWB](https://www.nwb.org/) files.
 
