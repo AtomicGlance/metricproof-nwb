@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metricproof-nwb"
-version = "0.1.0"
+version = "0.2.0"
 description = "Reproducible evidence reports for NWB validation and metadata."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -21,10 +21,11 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
-dependencies = []
+dependencies = ["metricproof>=0.2,<0.3"]
 
 [project.optional-dependencies]
 nwb = ["pynwb>=3.1"]
+dev = ["jsonschema>=4.23", "ruff>=0.12"]
 
 [project.scripts]
 metricproof-nwb = "metricproof_nwb.cli:main"
@@ -32,6 +33,10 @@ metricproof-nwb = "metricproof_nwb.cli:main"
 [project.urls]
 Repository = "https://github.com/AtomicGlance/metricproof-nwb"
 Issues = "https://github.com/AtomicGlance/metricproof-nwb/issues"
+PyPI = "https://pypi.org/project/metricproof-nwb/"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
