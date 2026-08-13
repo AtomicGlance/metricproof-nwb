@@ -76,7 +76,8 @@ def audit_nwb(
     metadata: dict[str, Any] = {}
     reader = metadata_reader or _default_metadata_reader
     try:
-        metadata = dict(reader(file_path))
+        raw_metadata = reader(file_path)
+        metadata = {str(key): json_value(value) for key, value in raw_metadata.items()}
     except Exception as exc:  # metadata should not hide schema validation results
         warnings.append(f"Metadata could not be read: {exc}")
 
