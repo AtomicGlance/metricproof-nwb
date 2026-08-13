@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
+from datetime import date, datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,8 @@ def json_value(value: Any) -> Any:
     """Convert validator output into values safe for an evidence document."""
 
     value = _enum_name(value)
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
     if isinstance(value, (list, tuple)):

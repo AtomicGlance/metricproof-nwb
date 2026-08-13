@@ -4,6 +4,7 @@ import hashlib
 import json
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
@@ -74,6 +75,24 @@ class AuditTests(unittest.TestCase):
                 },
             }
         ])
+        Draft202012Validator(load_schema("evidence")).validate(payload)
+
+    def test_custom_metadata_is_json_safe(self):
+        report = audit_nwb(
+            self.path,
+            validator=lambda path: [],
+            metadata_reader=lambda path: {
+                "session_start_time": datetime(2025, 1, 2, tzinfo=timezone.utc),
+                "nested": {"subject_count": 3},
+            },
+        )
+
+        payload = json.loads(render_json(report))
+        self.assertEqual(
+            payload["context"]["nwb_metadata"]["session_start_time"],
+            "2025-01-02T00:00:00+00:00",
+        )
+        self.assertEqual(payload["context"]["nwb_metadata"]["nested"], {"subject_count": 3})
         Draft202012Validator(load_schema("evidence")).validate(payload)
 
     def test_validation_failures_are_preserved(self):
