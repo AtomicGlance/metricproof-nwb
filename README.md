@@ -50,7 +50,8 @@ metricproof schema evidence
 Its top-level `report_type` is `nwb-audit`; the audited file appears in
 `artifacts`, each validator has a separate entry in `results`, selected NWB
 metadata is stored in `context.nwb_metadata`, and software provenance is stored
-in `context.validators`.
+in `context.validators`. JSON keys are sorted before writing, so equivalent
+audits produce stable evidence files that are easier to diff and archive.
 
 NWBInspector is called with `skip_validate=True` because MetricProof-NWB already
 runs PyNWB separately. This avoids duplicate schema findings while retaining a
