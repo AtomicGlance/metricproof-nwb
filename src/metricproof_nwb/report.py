@@ -39,4 +39,9 @@ def render_text(report: NWBProofReport) -> str:
 
 
 def render_json(report: NWBProofReport) -> str:
-    return json.dumps(report.to_dict(), indent=2, ensure_ascii=False) + "\n"
+    """Render an evidence report with stable key ordering for reproducibility."""
+
+    return (
+        json.dumps(report.to_dict(), indent=2, ensure_ascii=False, sort_keys=True)
+        + "\n"
+    )

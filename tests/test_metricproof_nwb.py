@@ -95,6 +95,18 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(payload["context"]["nwb_metadata"]["nested"], {"subject_count": 3})
         Draft202012Validator(load_schema("evidence")).validate(payload)
 
+    def test_json_render_sorts_keys_for_stable_evidence(self):
+        report = audit_nwb(
+            self.path,
+            validator=lambda path: [],
+            metadata_reader=lambda path: {"zeta": "last", "alpha": "first"},
+        )
+
+        payload = json.loads(render_json(report), object_pairs_hook=dict)
+
+        self.assertEqual(list(payload), sorted(payload))
+        self.assertEqual(list(payload["context"]["nwb_metadata"]), ["alpha", "zeta"])
+
     def test_validation_failures_are_preserved(self):
         report = audit_nwb(
             self.path,
