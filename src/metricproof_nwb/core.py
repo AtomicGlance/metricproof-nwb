@@ -15,6 +15,8 @@ from metricproof import (
 )
 
 from ._version import __version__
+from .checks import run_session_checks
+from .manifest import SessionManifest, load_manifest
 from .models import NWBProofReport
 from .validators import Validator, ValidatorSpec, json_value, pynwb_validator
 
@@ -55,6 +57,9 @@ def audit_nwb(
     validators: Iterable[ValidatorSpec] | None = None,
     metadata_reader: MetadataReader | None = None,
     artifact_uri: str | None = None,
+    manifest: SessionManifest | Mapping[str, Any] | str | Path | None = None,
+    session_config: Mapping[str, Any] | None = None,
+    command: str | None = None,
 ) -> NWBProofReport:
     """Hash, inspect, and validate one NWB file.
 
@@ -164,6 +169,30 @@ def audit_nwb(
             )
         )
 
+    metricproof_context: dict[str, Any] = {
+        "schema_version": "0.3",
+        "command": command or "metricproof-nwb audit",
+        "configuration": json_value(dict(session_config or {})),
+    }
+    if manifest is not None:
+        if isinstance(manifest, (str, Path)):
+            session_manifest = load_manifest(manifest)
+        elif isinstance(manifest, SessionManifest):
+            session_manifest = manifest
+        elif isinstance(manifest, Mapping):
+            session_manifest = SessionManifest.from_dict(manifest)
+        else:
+            raise TypeError("manifest must be a SessionManifest, mapping, or JSON path")
+        summary = run_session_checks(session_manifest, config=session_config)
+        results.extend(summary.results)
+        metricproof_context.update(
+            {
+                "session_status": summary.status,
+                "review_reasons": list(summary.review_reasons),
+                "manifest": session_manifest.to_dict(),
+            }
+        )
+
     report = EvidenceReport(
         report_type="nwb-audit",
         title=f"NWB evidence report: {file_path.name}",
@@ -174,6 +203,7 @@ def audit_nwb(
             "nwb_metadata": metadata,
             "warnings": warnings,
             "validators": [spec.provenance() for spec in validator_specs],
+            "metricproof_nwb": metricproof_context,
         },
     )
     return NWBProofReport(report=report)

@@ -15,6 +15,9 @@ def render_text(report: NWBProofReport) -> str:
         f"SHA-256: {report.sha256}",
         f"Size: {report.size_bytes} bytes",
     ]
+    if report.session_status:
+        lines.append(f"Session handoff: {report.session_status}")
+        lines.extend(f"Review gate: {reason}" for reason in report.review_reasons)
     if report.metadata:
         lines.append("Metadata:")
         lines.extend(f"  {key}: {value}" for key, value in report.metadata.items())

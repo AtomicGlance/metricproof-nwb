@@ -17,6 +17,12 @@ configuration. They use MetricProof's shared evidence envelope: producer
 identity, artifact fingerprints, structured results, execution context, and
 explicit schema versioning.
 
+It also provides a session evidence ledger. A ledger inventories the files that
+travel together, records parent/child lineage, and makes review gates explicit.
+The checks are configuration-driven: sample rates, graph nodes, expected
+counts, required files, and curation policy come from the session manifest,
+not from hard-coded HexMaze or laboratory constants.
+
 ## Install
 
 The base package depends only on MetricProof. Install the PyNWB extra for schema
@@ -40,6 +46,45 @@ metricproof-nwb audit session.nwb \
   --format json \
   --output evidence.json
 ```
+
+Create and use a session manifest:
+
+```bash
+metricproof-nwb manifest path/to/session --output session-manifest.json
+metricproof-nwb audit path/to/session/session.nwb \
+  --manifest session-manifest.json --format json --output proof.json
+metricproof-nwb bundle proof.json --output proof.html
+metricproof-nwb verify proof.json
+```
+
+`verify` rehashes every local artifact and distinguishes a changed file
+(`fail`), a missing handoff (`incomplete`), and a remote or undigested object
+that still needs a human check (`needs_review`). The HTML bundle is offline and
+includes the artifact graph, exact hashes, validator findings, and review
+reasons so it can be attached to a paper, archive submission, or CI artifact.
+
+For session-specific checks, pass a JSON object to `--session-json` when
+creating the manifest. For example:
+
+```json
+{
+  "session": {
+    "session_id": "hexmaze-2026-08-21-01",
+    "timebases": [{"name": "lfp", "rate": 1500, "sample_count": 3000, "start": 0, "stop": 2}],
+    "curation": {"human_reviewed": true, "recompute_required": true, "recomputed": true}
+  },
+  "config": {
+    "required_artifacts": ["session.nwb"],
+    "node_ids": ["start", "goal"],
+    "graph_edges": [["start", "goal"]]
+  }
+}
+```
+
+The checks cover artifact inventory and lineage, placeholder metadata, timebase
+consistency, recording durations, trial intervals and graph paths, declared
+NWB/file/unit counts, and curation gates. A report can therefore be technically valid while still being marked
+`needs_review` or `incomplete` when a human handoff is not evidenced.
 
 The JSON document conforms to MetricProof's bundled evidence schema:
 
@@ -88,6 +133,17 @@ The compatibility properties (`status`, `sha256`, `size_bytes`,
 `validation_errors`, and `exit_code`) remain available, while `report.report`
 provides direct access to the underlying `metricproof.EvidenceReport`.
 
+The Python API exposes the same ledger primitives:
+
+```python
+from metricproof_nwb import build_manifest, run_session_checks, verify_manifest
+
+manifest = build_manifest("path/to/session", session={"session_id": "s-01"})
+summary = run_session_checks(manifest)
+verification = verify_manifest(manifest, base_dir="path/to/session")
+print(summary.status, verification.status)
+```
+
 ## Reproducible example
 
 [`examples/academic_workflow`](https://github.com/AtomicGlance/metricproof-nwb/tree/main/examples/academic_workflow) contains a bundled,
@@ -112,4 +168,6 @@ On macOS or Linux, use `export PYTHONPATH="$PWD/src"` instead.
 
 MetricProof-NWB does not replace PyNWB validation, NWBInspector, or DANDI
 validation. It records their result alongside file identity and metadata so a
-research workflow can show exactly what was checked.
+research workflow can show exactly what was checked. It also does not infer
+scientific correctness from a complete manifest: a clean handoff is evidence of
+traceability, not a substitute for experimental judgment or domain review.

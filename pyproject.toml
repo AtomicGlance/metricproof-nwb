@@ -26,7 +26,8 @@ dependencies = ["metricproof>=0.2,<0.3"]
 [project.optional-dependencies]
 nwb = ["pynwb>=3.1"]
 inspector = ["nwbinspector>=0.7.2"]
-all = ["pynwb>=3.1", "nwbinspector>=0.7.2"]
+dandi = ["dandi>=0.67"]
+all = ["pynwb>=3.1", "nwbinspector>=0.7.2", "dandi>=0.67"]
 dev = [
   "jsonschema>=4.23",
   "nwbinspector>=0.7.2",

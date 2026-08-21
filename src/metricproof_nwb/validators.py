@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+import shutil
+import subprocess
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -272,6 +275,69 @@ def nwbinspector_validator(
     )
 
 
+def _run_dandi(path: Path) -> Iterable[Any]:
+    """Run the optional DANDI validator and preserve its machine output.
+
+    DANDI CLI versions have emitted both JSON arrays and JSON-lines over time;
+    accepting either keeps this adapter useful while the exact command and
+    version remain visible in the evidence provenance.
+    """
+
+    executable = shutil.which("dandi")
+    if executable is None:
+        raise RuntimeError(
+            "DANDI CLI is required; install metricproof-nwb[dandi] or dandi."
+        )
+    completed = subprocess.run(
+        [executable, "validate", "--format", "json", str(path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    output = (completed.stdout or "").strip()
+    if not output:
+        output = (completed.stderr or "").strip()
+    if not output:
+        if completed.returncode:
+            return [{
+                "message": f"dandi validate exited with status {completed.returncode}.",
+                "returncode": completed.returncode,
+                "severity": "critical",
+            }]
+        return []
+    try:
+        payload = json.loads(output)
+    except json.JSONDecodeError:
+        findings = []
+        for line in output.splitlines():
+            if line.strip():
+                findings.append({"message": line.strip()})
+        return findings
+    return payload if isinstance(payload, list) else [payload]
+
+
+def dandi_validator(*, runner: Validator | None = None) -> ValidatorSpec:
+    """Return an optional DANDI validation adapter with explicit provenance."""
+
+    injected = runner is not None
+    return ValidatorSpec(
+        name="dandi-cli" if not injected else "injected-dandi-compatible-validator",
+        version=_package_version("dandi") if not injected else "unknown",
+        check_id="dandi-validation",
+        check_type="archive_validation",
+        runner=runner or _run_dandi,
+        configuration={
+            "command": "dandi validate --format json",
+            "injected_runner": injected,
+        },
+        failure_severity="critical",
+        pass_message="DANDI validation passed.",
+        failure_label="DANDI",
+        why_it_matters="DANDI validation checks whether the NWB artifact is ready for archive reuse.",
+        suggested_fix="Address the DANDI validation findings and rerun the audit.",
+    )
+
+
 __all__ = [
     "Validator",
     "ValidatorSpec",
@@ -280,4 +346,5 @@ __all__ = [
     "normalise_nwbinspector_findings",
     "nwbinspector_validator",
     "pynwb_validator",
+    "dandi_validator",
 ]
