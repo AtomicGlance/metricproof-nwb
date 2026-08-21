@@ -75,6 +75,11 @@ class NWBProofReport:
     def status(self) -> str:
         if self.error:
             return "error"
+        workflow_status = self.report.context.get("metricproof_nwb", {}).get(
+            "session_status"
+        )
+        if self.report.passed and workflow_status in {"incomplete", "needs_review"}:
+            return str(workflow_status)
         return "pass" if self.report.passed else "fail"
 
     @property
@@ -85,9 +90,25 @@ class NWBProofReport:
 
     @property
     def exit_code(self) -> int:
-        """Return a CI-friendly exit code: 0 pass, 1 invalid, 2 unable to run."""
+        """Return 0 pass, 1 invalid, 2 execution error, or 3 review incomplete."""
 
-        return 2 if self.status == "error" else self.report.exit_code
+        if self.status == "error":
+            return 2
+        if self.status in {"incomplete", "needs_review"}:
+            return 3
+        return self.report.exit_code
+
+    @property
+    def session_status(self) -> str | None:
+        """Return the session handoff state when a manifest was audited."""
+
+        value = self.report.context.get("metricproof_nwb", {}).get("session_status")
+        return str(value) if value is not None else None
+
+    @property
+    def review_reasons(self) -> list[str]:
+        value = self.report.context.get("metricproof_nwb", {}).get("review_reasons", [])
+        return [str(item) for item in value]
 
     def to_dict(self) -> dict[str, Any]:
         return self.report.to_dict()
