@@ -5,6 +5,8 @@
 
 Reproducible evidence reports for [NWB](https://www.nwb.org/) files.
 
+Release history is tracked in [`CHANGELOG.md`](CHANGELOG.md).
+
 MetricProof-NWB complements schema and best-practice validators by preserving
 the evidence around an audit: the input path, SHA-256 digest, selected NWB
 metadata, validation findings, warnings, and timestamp. That makes a result
@@ -104,9 +106,10 @@ clear version and configuration for each validator. Best-practice suggestions
 and violations are preserved but do not fail the audit; critical findings and
 validator execution errors do.
 
-The command exits with `0` for a valid file, `1` when PyNWB reports validation
-findings, and `2` when the audit cannot run (for example, when PyNWB is not
-installed or the file cannot be opened).
+The command exits with `0` when all critical checks pass, `1` when a critical
+validator or session check fails, `2` when the audit cannot run (for example,
+when PyNWB is not installed or the file cannot be opened), and `3` when a
+manifest completes with a non-blocking `needs_review` handoff state.
 
 The Python API accepts injectable validator and metadata functions so projects
 can add study-specific checks without coupling their tests to one PyNWB
