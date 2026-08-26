@@ -21,6 +21,14 @@ jobs:
           python -m pip install --upgrade build twine
           python -m build
           python -m twine check dist/*
+      - name: Smoke-test the built wheel in a clean environment
+        run: |
+          python -m venv .release-venv
+          . .release-venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          metricproof-nwb --version
+          python -c "import metricproof_nwb; assert metricproof_nwb.__version__ == '0.3.0'"
       - uses: actions/upload-artifact@v4
         with:
           name: python-package-distributions
