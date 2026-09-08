@@ -149,6 +149,12 @@ print(summary.status, verification.status)
 
 ## Reproducible example
 
+For a real public-data example, see the [DANDI motor-cortex case study](examples/public_dandi_case_study/README.md).
+It audits a published mouse session, detects changed and missing files, and
+demonstrates why an evidence fingerprint cannot establish correct neural–behavioral
+timing. The recorded reports retain the original file's validator findings and
+an Inspector check error rather than presenting an artificially clean result.
+
 [`examples/academic_workflow`](https://github.com/AtomicGlance/metricproof-nwb/tree/main/examples/academic_workflow) contains a bundled,
 synthetic extracellular-electrophysiology NWB file and the evidence JSON created
 from that exact artifact. The workflow verifies the report's SHA-256 digest and

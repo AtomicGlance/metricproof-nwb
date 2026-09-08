@@ -1,0 +1,332 @@
+{
+  "artifacts": [
+    {
+      "media_type": "application/x-hdf5",
+      "metadata": {
+        "experimenter": [
+          "Mike Economo"
+        ],
+        "identifier": "anm372907_2017-06-13_5",
+        "institution": "Janelia Research Campus",
+        "session_description": "",
+        "session_start_time": "2017-06-13T00:00:00-05:00"
+      },
+      "name": "session.nwb",
+      "sha256": "974be4e6bb774eeef4075e4920db664cd2d9499d41278a953fc72e81ebaec846",
+      "size_bytes": 258992,
+      "uri": "session.nwb"
+    }
+  ],
+  "context": {
+    "case_study_source": {
+      "asset_id": "f1b6ed8f-1e14-44fa-b4ee-240d0efe3759",
+      "asset_path": "sub-anm372907/sub-anm372907_ses-20170613.nwb",
+      "citation": "Economo, Michael N.; Svoboda, Karel (2022) Mouse anterior lateral motor cortex (ALM) in delay response task (Version 0.220126.1855) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000006/0.220126.1855",
+      "dandiset": "000006",
+      "doi": "https://doi.org/10.48324/dandi.000006/0.220126.1855",
+      "download_url": "https://api.dandiarchive.org/api/assets/f1b6ed8f-1e14-44fa-b4ee-240d0efe3759/download/",
+      "license": "CC-BY-4.0",
+      "sha256": "974be4e6bb774eeef4075e4920db664cd2d9499d41278a953fc72e81ebaec846",
+      "size_bytes": 258992,
+      "version": "0.220126.1855"
+    },
+    "metricproof_nwb": {
+      "command": "python examples/public_dandi_case_study/run_case_study.py",
+      "configuration": {},
+      "schema_version": "0.3"
+    },
+    "nwb_metadata": {
+      "experimenter": [
+        "Mike Economo"
+      ],
+      "identifier": "anm372907_2017-06-13_5",
+      "institution": "Janelia Research Campus",
+      "session_description": "",
+      "session_start_time": "2017-06-13T00:00:00-05:00"
+    },
+    "validators": [
+      {
+        "check_id": "pynwb-schema-validation",
+        "configuration": {
+          "api": "pynwb.validate",
+          "injected_runner": false
+        },
+        "name": "pynwb",
+        "version": "4.2.0"
+      },
+      {
+        "check_id": "nwbinspector-best-practices",
+        "configuration": {
+          "api": "nwbinspector.inspect_nwbfile",
+          "config": {},
+          "ignore": [],
+          "importance_threshold": "BEST_PRACTICE_SUGGESTION",
+          "select": [],
+          "skip_validate": true
+        },
+        "name": "nwbinspector",
+        "version": "0.7.2"
+      }
+    ],
+    "warnings": []
+  },
+  "counts": {
+    "error": 1,
+    "fail": 1,
+    "pass": 0
+  },
+  "generated_at": "2026-09-08T06:43:14.923114+00:00",
+  "passed": false,
+  "producer": {
+    "name": "metricproof-nwb",
+    "version": "0.3.0"
+  },
+  "report_type": "nwb-audit",
+  "results": [
+    {
+      "check_id": "pynwb-schema-validation",
+      "check_type": "nwb_validation",
+      "evidence": [
+        {
+          "location": "general/extracellular_ephys/electrodes/location",
+          "message": "root/general/extracellular_ephys/electrodes/location (general/extracellular_ephys/electrodes/location): incorrect type - expected 'ascii', got 'utf'",
+          "name": "root/general/extracellular_ephys/electrodes/location",
+          "reason": "incorrect type - expected 'ascii', got 'utf'"
+        },
+        {
+          "location": "general/extracellular_ephys/electrodes/filtering",
+          "message": "root/general/extracellular_ephys/electrodes/filtering (general/extracellular_ephys/electrodes/filtering): incorrect type - expected 'float', got 'utf'",
+          "name": "root/general/extracellular_ephys/electrodes/filtering",
+          "reason": "incorrect type - expected 'float', got 'utf'"
+        },
+        {
+          "location": "general/extracellular_ephys/electrodes/group_name",
+          "message": "root/general/extracellular_ephys/electrodes/group_name (general/extracellular_ephys/electrodes/group_name): incorrect type - expected 'ascii', got 'utf'",
+          "name": "root/general/extracellular_ephys/electrodes/group_name",
+          "reason": "incorrect type - expected 'ascii', got 'utf'"
+        }
+      ],
+      "expected": {
+        "findings": 0
+      },
+      "message": "PyNWB reported 3 finding(s).",
+      "observed": {
+        "findings": 3
+      },
+      "severity": "critical",
+      "status": "fail",
+      "suggested_fix": "Correct the reported NWB schema findings and rerun the audit.",
+      "why_it_matters": "Schema-valid NWB files are safer to exchange and reuse."
+    },
+    {
+      "check_id": "nwbinspector-best-practices",
+      "check_type": "nwb_best_practice",
+      "evidence": [
+        {
+          "check_function_name": "check_units_resolution_is_set",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "message": "Units table has spike_times but resolution is not set. Resolution indicates the smallest possible difference between two spike times and should be a positive float equal to 1/sampling_rate of the recording system (e.g., Units(resolution=1/30000) for a 30 kHz system). This information is needed to assess the precision of spike timing data.",
+          "object_name": "units",
+          "object_type": "Units",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_ascending_spike_times",
+          "file_path": "session.nwb",
+          "importance": "CRITICAL",
+          "message": "Unit 0 contains descending spike times, which is always a data error. Spike times should be sorted in strictly ascending order.",
+          "object_name": "units",
+          "object_type": "Units",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "During evaluation of 'check_units_table_duration' - <class 'TypeError'>: Indexing arrays must have integer dtypes",
+          "file_path": "session.nwb",
+          "importance": "ERROR",
+          "message": "Traceback (most recent call last):\n  File \"C:\\Users\\HP\\Documents\\Codex\\2026-07-28\\https-github-com-justingamer191-holo-tab\\metricproof-nwb-repo\\.venv-package-test\\Lib\\site-packages\\nwbinspector\\_nwb_inspection.py\", line 471, in run_checks\n    output = check_function(nwbfile_object)\n  File \"C:\\Users\\HP\\Documents\\Codex\\2026-07-28\\https-github-com-justingamer191-holo-tab\\metricproof-nwb-repo\\.venv-package-test\\Lib\\site-packages\\nwbinspector\\_registration.py\", line 83, in auto_parse_some_output\n    output = check_function(*args, **kwargs)\n  File \"C:\\Users\\HP\\Documents\\Codex\\2026-07-28\\https-github-com-justingamer191-holo-tab\\metricproof-nwb-repo\\.venv-package-test\\Lib\\site-packages\\nwbinspector\\checks\\_ecephys.py\", line 404, in check_units_table_duration\n    boundary_spike_times = spike_times_data[all_indices]\n                           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n  File \"h5py/_objects.pyx\", line 54, in h5py._objects.with_phil.wrapper\n  File \"h5py/_objects.pyx\", line 55, in h5py._objects.with_phil.wrapper\n  File \"C:\\Users\\HP\\Documents\\Codex\\2026-07-28\\https-github-com-justingamer191-holo-tab\\metricproof-nwb-repo\\.venv-package-test\\Lib\\site-packages\\h5py\\_hl\\dataset.py\", line 945, in __getitem__\n    selection = sel.select(self.shape, args, dataset=self)\n  File \"C:\\Users\\HP\\Documents\\Codex\\2026-07-28\\https-github-com-justingamer191-holo-tab\\metricproof-nwb-repo\\.venv-package-test\\Lib\\site-packages\\h5py\\_hl\\selections.py\", line 85, in select\n    return selector.make_selection(args)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"h5py/_objects.pyx\", line 54, in h5py._objects.with_phil.wrapper\n  File \"h5py/_objects.pyx\", line 55, in h5py._objects.with_phil.wrapper\n  File \"h5py/_selector.pyx\", line 297, in h5py._selector.Selector.make_selection\n  File \"h5py/_selector.pyx\", line 198, in h5py._selector.Selector.apply_args\nTypeError: Indexing arrays must have integer dtypes\n",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_electrodes_location_allen_ccf",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "location": "/",
+          "message": "Electrode location 'brain_region: ALM; brain_subregion: N/A; cortical_layer: 5; hemisphere: left; brain_location_full_name: N/A' is not a term in the Allen Mouse Brain CCF ontology. Please use either the full name or abbreviation from the Allen Mouse Brain Atlas (e.g., 'Primary visual area' or 'VISp'). This check can be ignored if Allen CCF terms do not meet your needs.",
+          "object_name": "root",
+          "object_type": "NWBFile",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_name_colons",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/general/extracellular_ephys/H-116: 64",
+          "message": "Object name contains colons.",
+          "object_name": "H-116: 64",
+          "object_type": "ElectrodeGroup",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_description",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/general/subject",
+          "message": "Description is missing.",
+          "object_name": "subject",
+          "object_type": "Subject",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_description",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "message": "Description is missing.",
+          "object_name": "response",
+          "object_type": "VectorData",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_description",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "message": "Description is missing.",
+          "object_name": "type",
+          "object_type": "VectorData",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_description",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/general/devices/H-116",
+          "message": "Description is missing.",
+          "object_name": "H-116",
+          "object_type": "Device",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_description",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/acquisition/lick_times/lick_right_times",
+          "message": "Description ('no description') is a placeholder.",
+          "object_name": "lick_right_times",
+          "object_type": "TimeSeries",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_description",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/acquisition/lick_times/lick_left_times",
+          "message": "Description ('no description') is a placeholder.",
+          "object_name": "lick_left_times",
+          "object_type": "TimeSeries",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_empty_string_for_optional_attribute",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/general/subject",
+          "message": "The attribute \"genotype\" is optional and you have supplied an empty string. Improve my omitting this attribute (in MatNWB or PyNWB) or entering as None (in PyNWB)",
+          "object_name": "subject",
+          "object_type": "Subject",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_experimenter_form",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "location": "/",
+          "message": "The name of experimenter 'Mike Economo' does not match any of the accepted DANDI forms: 'LastName, Firstname', 'LastName, FirstName MiddleInitial.' or 'LastName, FirstName, MiddleName'.",
+          "object_name": "root",
+          "object_type": "NWBFile",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_subject_age",
+          "file_path": "session.nwb",
+          "importance": "CRITICAL",
+          "location": "/general/subject",
+          "message": "Subject is missing age and date_of_birth. Please specify at least one of these fields.",
+          "object_name": "subject",
+          "object_type": "Subject",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_column_binary_capability",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "message": "Column 'is_good' uses 'int32' but has binary values [0 1]. Consider making it boolean instead and renaming the column to start with 'is_'; doing so will save 417.00B.",
+          "object_name": "trials",
+          "object_type": "TimeIntervals",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_col_not_nan",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_SUGGESTION",
+          "message": "Column 'stop_time' has all NaN values. Consider removing it from the table.",
+          "object_name": "trials",
+          "object_type": "TimeIntervals",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_timestamps_ascending",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "location": "/acquisition/lick_times/lick_right_times",
+          "message": "lick_right_times timestamps are not ascending.",
+          "object_name": "lick_right_times",
+          "object_type": "TimeSeries",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_timestamps_ascending",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "location": "/acquisition/lick_times/lick_left_times",
+          "message": "lick_left_times timestamps are not ascending.",
+          "object_name": "lick_left_times",
+          "object_type": "TimeSeries",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_resolution",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "location": "/acquisition/lick_times/lick_right_times",
+          "message": "'resolution' should use -1.0 or NaN for unknown instead of 0.0.",
+          "object_name": "lick_right_times",
+          "object_type": "TimeSeries",
+          "severity": "LOW"
+        },
+        {
+          "check_function_name": "check_resolution",
+          "file_path": "session.nwb",
+          "importance": "BEST_PRACTICE_VIOLATION",
+          "location": "/acquisition/lick_times/lick_left_times",
+          "message": "'resolution' should use -1.0 or NaN for unknown instead of 0.0.",
+          "object_name": "lick_left_times",
+          "object_type": "TimeSeries",
+          "severity": "LOW"
+        }
+      ],
+      "expected": {
+        "findings": 0
+      },
+      "message": "NWBInspector reported 20 finding(s).",
+      "observed": {
+        "findings": 20
+      },
+      "severity": "critical",
+      "status": "error",
+      "suggested_fix": "Review the NWBInspector findings and rerun the audit.",
+      "why_it_matters": "NWBInspector findings highlight correctness and reuse risks that schema validation alone may not detect."
+    }
+  ],
+  "schema_version": "1.0",
+  "title": "NWB evidence report: session.nwb"
+}

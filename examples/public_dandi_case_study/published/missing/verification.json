@@ -1,0 +1,16 @@
+{
+  "checks": [
+    {
+      "expected_sha256": "974be4e6bb774eeef4075e4920db664cd2d9499d41278a953fc72e81ebaec846",
+      "expected_size_bytes": 258992,
+      "message": "Artifact is missing: C:\\Users\\HP\\Documents\\Codex\\2026-07-28\\https-github-com-justingamer191-holo-tab\\metricproof-nwb-repo\\examples\\public_dandi_case_study\\published\\missing\\session.nwb",
+      "name": "session.nwb",
+      "observed_sha256": "",
+      "observed_size_bytes": null,
+      "status": "incomplete",
+      "uri": "session.nwb"
+    }
+  ],
+  "passed": false,
+  "status": "incomplete"
+}

@@ -1,0 +1,12 @@
+{
+  "asset_id": "f1b6ed8f-1e14-44fa-b4ee-240d0efe3759",
+  "asset_path": "sub-anm372907/sub-anm372907_ses-20170613.nwb",
+  "citation": "Economo, Michael N.; Svoboda, Karel (2022) Mouse anterior lateral motor cortex (ALM) in delay response task (Version 0.220126.1855) [Data set]. DANDI archive. https://doi.org/10.48324/dandi.000006/0.220126.1855",
+  "dandiset": "000006",
+  "doi": "https://doi.org/10.48324/dandi.000006/0.220126.1855",
+  "download_url": "https://api.dandiarchive.org/api/assets/f1b6ed8f-1e14-44fa-b4ee-240d0efe3759/download/",
+  "license": "CC-BY-4.0",
+  "sha256": "974be4e6bb774eeef4075e4920db664cd2d9499d41278a953fc72e81ebaec846",
+  "size_bytes": 258992,
+  "version": "0.220126.1855"
+}
