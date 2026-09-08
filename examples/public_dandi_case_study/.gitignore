@@ -1,0 +1,7 @@
+# Intermediate investigations and downloaded/modified data stay local.
+results/
+recorded/
+evidence/
+*.nwb
+**/*.nwb
+reproduced*/

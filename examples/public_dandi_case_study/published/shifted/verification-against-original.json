@@ -1,0 +1,16 @@
+{
+  "checks": [
+    {
+      "expected_sha256": "974be4e6bb774eeef4075e4920db664cd2d9499d41278a953fc72e81ebaec846",
+      "expected_size_bytes": 258992,
+      "message": "Artifact SHA-256 does not match the manifest.",
+      "name": "session.nwb",
+      "observed_sha256": "79da96a6808df698d1770cd769b01eeb60f2e19217e394ee705450081ea82ce2",
+      "observed_size_bytes": 258992,
+      "status": "fail",
+      "uri": "session.nwb"
+    }
+  ],
+  "passed": false,
+  "status": "fail"
+}
